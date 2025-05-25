@@ -1,63 +1,67 @@
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class Journal implements LibraryResource {
-    private final String title;
-    private final String issueNumber;
-    private final LocalDate publicationDate;
-    private boolean available;
+public class LibraryRepository implements ResourceRepository {
+    private final List<LibraryResource> resources;
     
-    public Journal(String title, String issueNumber, LocalDate publicationDate) {
-        this.title = title;
-        this.issueNumber = issueNumber;
-        this.publicationDate = publicationDate;
-        this.available = true;
+    public LibraryRepository() {
+        this.resources = new ArrayList<>();
     }
     
     @Override
-    public String getTitle() {
-        return title;
+    public LibraryResource findByTitle(String title) {
+        return resources.stream()
+                .filter(resource -> resource.getTitle().equalsIgnoreCase(title))
+                .findFirst()
+                .orElse(null);
     }
     
     @Override
-    public String getResourceType() {
-        return "Journal";
+    public List<LibraryResource> getAllResources() {
+        return new ArrayList<>(resources);
     }
     
     @Override
-    public boolean isAvailable() {
-        return available;
-    }
-    
-    @Override
-    public void borrow() {
-        if (!available) {
-            throw new IllegalStateException("Journal '" + title + "' is already borrowed");
+    public void addResource(LibraryResource resource) {
+        if (resource != null) {
+            resources.add(resource);
         }
-        available = false;
     }
     
     @Override
-    public void returnResource() {
-        if (available) {
-            throw new IllegalStateException("Journal '" + title + "' is not currently borrowed");
+    public List<LibraryResource> getResourcesByType(String resourceType) {
+        return resources.stream()
+                .filter(resource -> resource.getResourceType().equalsIgnoreCase(resourceType))
+                .collect(Collectors.toList());
+    }
+    
+    @Override
+    public List<LibraryResource> getAvailableResources() {
+        return resources.stream()
+                .filter(LibraryResource::isAvailable)
+                .collect(Collectors.toList());
+    }
+    
+    // Additional utility methods for testing
+    public int getTotalResourceCount() {
+        return resources.size();
+    }
+    
+    public int getAvailableResourceCount() {
+        return (int) resources.stream()
+                .filter(LibraryResource::isAvailable)
+                .count();
+    }
+    
+    public void displayAllResources() {
+        System.out.println("All Library Resources:");
+        if (resources.isEmpty()) {
+            System.out.println("No resources available");
+        } else {
+            for (int i = 0; i < resources.size(); i++) {
+                System.out.println((i + 1) + ". " + resources.get(i).getDetails());
+            }
         }
-        available = true;
-    }
-    
-    @Override
-    public String getDetails() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
-        return String.format("Journal: %s (Issue: %s, Date: %s) - %s", 
-                           title, issueNumber, publicationDate.format(formatter), 
-                           available ? "Available" : "Borrowed");
-    }
-    
-    public String getIssueNumber() {
-        return issueNumber;
-    }
-    
-    public LocalDate getPublicationDate() {
-        return publicationDate;
     }
 }
