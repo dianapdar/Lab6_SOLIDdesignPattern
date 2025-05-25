@@ -1,7 +1,7 @@
 # Lab6_SOLIDdesignPattern
 
-**Problem Statement:
-**
+### Problem Statement:
+
 
 The NEU Library offers a variety of resources, including books, theses, capstones, internet access, journals, and newspapers.
 
@@ -15,5 +15,5 @@ Create a repository in your GitHub account. Put your solution there. In the read
 
 Make sure you have a TestProgram that will validate the proposed refactored codes.
 
-UML Class Diagram:
+### UML Class Diagram:
 ![neu lib](https://github.com/user-attachments/assets/6e11393f-97f4-4b76-b990-0e594220ca98)
